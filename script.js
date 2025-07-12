@@ -2,7 +2,7 @@
 class SurveyApp {
     constructor() {
         this.liffId = '2007735873-3DPeBMbL'; // 請替換為您的LIFF ID
-        this.gasUrl = 'https://script.google.com/macros/s/AKfycbwPz6s7u_EXOpWvs9_yqynVinwTs6RRtgQUwaWxPmI_I0WhiUZqVvEu0Q2Nly9FxYU/exec'; // 請替換為您的GAS Web App URL
+        this.gasUrl = 'https://script.google.com/macros/s/AKfycbzCsBRdDueWmHe0PRYf4Dy07VdViGqdjm488grKF-jzhPaZ0H3VjgeaQuZ3HczFV8vF/exec'; // 請替換為您的GAS Web App URL
         this.userProfile = null;
         this.isSubmitting = false;
         
