@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIFF問卷表</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 問卷調查表</h1>
+            <p id="userInfo">正在載入用戶資訊...</p>
+        </header>
+
+        <form id="surveyForm" class="survey-form">
+            <div class="form-group">
+                <label for="name">姓名 *</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">電子信箱 *</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="age">年齡 *</label>
+                <select id="age" name="age" required>
+                    <option value="">請選擇年齡範圍</option>
+                    <option value="18-25">18-25歲</option>
+                    <option value="26-35">26-35歲</option>
+                    <option value="36-45">36-45歲</option>
+                    <option value="46-55">46-55歲</option>
+                    <option value="56-65">56-65歲</option>
+                    <option value="65+">65歲以上</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="occupation">職業 *</label>
+                <input type="text" id="occupation" name="occupation" required>
+            </div>
+
+            <div class="form-group">
+                <label>您對我們的服務滿意度如何？ *</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="satisfaction" value="非常滿意" required> 非常滿意</label>
+                    <label><input type="radio" name="satisfaction" value="滿意" required> 滿意</label>
+                    <label><input type="radio" name="satisfaction" value="普通" required> 普通</label>
+                    <label><input type="radio" name="satisfaction" value="不滿意" required> 不滿意</label>
+                    <label><input type="radio" name="satisfaction" value="非常不滿意" required> 非常不滿意</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="recommendation">推薦度 (1-10分) *</label>
+                <input type="range" id="recommendation" name="recommendation" min="1" max="10" value="5" required>
+                <div class="range-value">
+                    <span>1</span>
+                    <span id="recommendationValue">5</span>
+                    <span>10</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="feedback">其他建議或回饋</label>
+                <textarea id="feedback" name="feedback" rows="4" placeholder="請分享您的想法..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>您希望收到哪些類型的資訊？（可複選）</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="interests" value="產品更新"> 產品更新</label>
+                    <label><input type="checkbox" name="interests" value="促銷活動"> 促銷活動</label>
+                    <label><input type="checkbox" name="interests" value="技術文章"> 技術文章</label>
+                    <label><input type="checkbox" name="interests" value="企業動態"> 企業動態</label>
+                </div>
+            </div>
+
+            <button type="submit" id="submitBtn" class="submit-btn">
+                <span class="btn-text">提交問卷</span>
+                <span class="btn-loading">提交中...</span>
+            </button>
+        </form>
+
+        <div id="successMessage" class="success-message">
+            <h2>✅ 感謝您的參與！</h2>
+            <p>您的回饋已成功提交，我們將仔細閱讀並持續改進服務品質。</p>
+        </div>
+
+        <div id="errorMessage" class="error-message">
+            <h2>❌ 提交失敗</h2>
+            <p id="errorText">發生未知錯誤，請稍後再試。</p>
+            <button onclick="location.reload()">重新載入</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
