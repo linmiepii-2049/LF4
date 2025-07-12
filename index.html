@@ -3,79 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIFF問卷表</title>
+    <title>麵包店顧客需求調查</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🔍 問卷調查表</h1>
+            <h1>🍞 麵包店顧客需求調查</h1>
             <p id="userInfo">正在載入用戶資訊...</p>
         </header>
 
         <form id="surveyForm" class="survey-form">
-            <div class="form-group">
-                <label for="name">姓名 *</label>
-                <input type="text" id="name" name="name" required>
-            </div>
+            <!-- Part 1: 基本背景 -->
+            <div class="form-section">
+                <h2>✅ Part 1：基本背景</h2>
+                <p class="section-desc">方便區分不同顧客輪廓</p>
+                
+                <div class="form-group">
+                    <label>1. 年齡 *</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="age" value="25歲以下" required> 25歲以下</label>
+                        <label><input type="radio" name="age" value="26-45歲" required> 26-45歲</label>
+                        <label><input type="radio" name="age" value="46歲以上" required> 46歲以上</label>
+                    </div>
+                </div>
 
-            <div class="form-group">
-                <label for="email">電子信箱 *</label>
-                <input type="email" id="email" name="email" required>
-            </div>
+                <div class="form-group">
+                    <label>2. 性別 *</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="gender" value="男" required> 男</label>
+                        <label><input type="radio" name="gender" value="女" required> 女</label>
+                        <label><input type="radio" name="gender" value="其他" required> 其他</label>
+                    </div>
+                </div>
 
-            <div class="form-group">
-                <label for="age">年齡 *</label>
-                <select id="age" name="age" required>
-                    <option value="">請選擇年齡範圍</option>
-                    <option value="18-25">18-25歲</option>
-                    <option value="26-35">26-35歲</option>
-                    <option value="36-45">36-45歲</option>
-                    <option value="46-55">46-55歲</option>
-                    <option value="56-65">56-65歲</option>
-                    <option value="65+">65歲以上</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="occupation">職業 *</label>
-                <input type="text" id="occupation" name="occupation" required>
-            </div>
-
-            <div class="form-group">
-                <label>您對我們的服務滿意度如何？ *</label>
-                <div class="radio-group">
-                    <label><input type="radio" name="satisfaction" value="非常滿意" required> 非常滿意</label>
-                    <label><input type="radio" name="satisfaction" value="滿意" required> 滿意</label>
-                    <label><input type="radio" name="satisfaction" value="普通" required> 普通</label>
-                    <label><input type="radio" name="satisfaction" value="不滿意" required> 不滿意</label>
-                    <label><input type="radio" name="satisfaction" value="非常不滿意" required> 非常不滿意</label>
+                <div class="form-group">
+                    <label>3. 居住地 *</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="location" value="中壢區" required> 中壢區</label>
+                        <label><input type="radio" name="location" value="其他" required> 其他</label>
+                    </div>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="recommendation">推薦度 (1-10分) *</label>
-                <input type="range" id="recommendation" name="recommendation" min="1" max="10" value="5" required>
-                <div class="range-value">
-                    <span>1</span>
-                    <span id="recommendationValue">5</span>
-                    <span>10</span>
+            <!-- Part 2: 購買習慣調查 -->
+            <div class="form-section">
+                <h2>✅ Part 2：購買習慣調查</h2>
+                <p class="section-desc">了解顧客行為模式</p>
+                
+                <div class="form-group">
+                    <label>1. 你通常多久購買一次麵包？ *</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="frequency" value="每週3次以上" required> 每週3次以上</label>
+                        <label><input type="radio" name="frequency" value="每週1~3次" required> 每週1~3次</label>
+                        <label><input type="radio" name="frequency" value="偶爾" required> 偶爾</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>2. 你通常在哪裡購買麵包？（可複選）*</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="purchase_location" value="麵包店"> 麵包店</label>
+                        <label><input type="checkbox" name="purchase_location" value="便利商店"> 便利商店</label>
+                        <label><input type="checkbox" name="purchase_location" value="量販超市"> 量販超市</label>
+                        <label><input type="checkbox" name="purchase_location" value="網購"> 網購</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>3. 購買麵包的時間通常是？ *</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="purchase_time" value="下午(12:00~17:00)" required> 下午(12:00~17:00)</label>
+                        <label><input type="radio" name="purchase_time" value="晚上(17:00後)" required> 晚上(17:00後)</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>4. 麵包通常是你的哪一餐？ *</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="meal_type" value="早餐" required> 早餐</label>
+                        <label><input type="radio" name="meal_type" value="點心" required> 點心</label>
+                        <label><input type="radio" name="meal_type" value="其他" required> 其他</label>
+                    </div>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="feedback">其他建議或回饋</label>
-                <textarea id="feedback" name="feedback" rows="4" placeholder="請分享您的想法..."></textarea>
+            <!-- Part 3: 選擇考量 -->
+            <div class="form-section">
+                <h2>✅ Part 3：選擇考量</h2>
+                <p class="section-desc">了解真正需求</p>
+                
+                <div class="form-group">
+                    <label>1. 你在選購麵包時最重視什麼？（可複選）*</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="priority" value="價格"> 價格</label>
+                        <label><input type="checkbox" name="priority" value="無添加物食材"> 無添加物食材</label>
+                        <label><input type="checkbox" name="priority" value="口味"> 口味</label>
+                        <label><input type="checkbox" name="priority" value="製作過程"> 製作過程</label>
+                        <label><input type="checkbox" name="priority" value="創新品項"> 創新品項</label>
+                        <label><input type="checkbox" name="priority" value="外觀"> 外觀</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>2. 選用「更好的食材」你願意為麵包多付多少錢？ *</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="price_premium" value="10%以下" required> 10%以下</label>
+                        <label><input type="radio" name="price_premium" value="11%~20%" required> 11%~20%</label>
+                        <label><input type="radio" name="price_premium" value="依食材成本定價" required> 依食材成本定價</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>3. 你喜歡的烘焙品項是什麼？（可複選）*</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="bakery_items" value="吐司系列"> 吐司系列</label>
+                        <label><input type="checkbox" name="bakery_items" value="台式日式麵包"> 台式日式麵包</label>
+                        <label><input type="checkbox" name="bakery_items" value="歐式麵包"> 歐式麵包</label>
+                        <label><input type="checkbox" name="bakery_items" value="法國麵包"> 法國麵包</label>
+                        <label><input type="checkbox" name="bakery_items" value="丹麥可頌"> 丹麥可頌</label>
+                        <label><input type="checkbox" name="bakery_items" value="貝果系列"> 貝果系列</label>
+                        <label><input type="checkbox" name="bakery_items" value="無麩質麵包"> 無麩質麵包</label>
+                        <label><input type="checkbox" name="bakery_items" value="蛋糕or甜點"> 蛋糕or甜點</label>
+                        <label><input type="checkbox" name="bakery_items" value="餅乾or拌手禮"> 餅乾or拌手禮</label>
+                    </div>
+                    <input type="text" name="bakery_items_other" placeholder="其他（請填寫）">
+                </div>
+
+                <div class="form-group">
+                    <label>4. 你喜歡的麵包口味是什麼？（可複選）*</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="flavor_preference" value="原味"> 原味</label>
+                        <label><input type="checkbox" name="flavor_preference" value="鹹口味"> 鹹口味</label>
+                        <label><input type="checkbox" name="flavor_preference" value="甜口味"> 甜口味</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>5. 你會在意麵包的食材成分是否天然無添加嗎？ *</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="ingredient_concern" value="非常在意" required> 非常在意</label>
+                        <label><input type="radio" name="ingredient_concern" value="不在意" required> 不在意</label>
+                    </div>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label>您希望收到哪些類型的資訊？（可複選）</label>
-                <div class="checkbox-group">
-                    <label><input type="checkbox" name="interests" value="產品更新"> 產品更新</label>
-                    <label><input type="checkbox" name="interests" value="促銷活動"> 促銷活動</label>
-                    <label><input type="checkbox" name="interests" value="技術文章"> 技術文章</label>
-                    <label><input type="checkbox" name="interests" value="企業動態"> 企業動態</label>
+            <!-- Part 4: 意見與建議 -->
+            <div class="form-section">
+                <h2>✅ Part 4：意見與建議</h2>
+                <p class="section-desc">蒐集靈感與需求</p>
+                
+                <div class="form-group">
+                    <label for="favorite_bread">1. 你最喜歡的麵包/蛋糕是什麼？（不限幾種）</label>
+                    <textarea id="favorite_bread" name="favorite_bread" rows="3" placeholder="請分享您最喜歡的麵包或蛋糕..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="rare_items">2. 有沒有你很常找但市面上很少見的麵包/蛋糕種類？（不限幾種）</label>
+                    <textarea id="rare_items" name="rare_items" rows="3" placeholder="請分享您常找但少見的麵包或蛋糕..."></textarea>
                 </div>
             </div>
 
