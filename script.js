@@ -270,19 +270,8 @@ class SurveyApp {
         }
         
         try {
-            const response = await fetch(this.gasUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP錯誤: ${response.status}`);
-            }
-            
-            const result = await response.json();
+            // 使用JSONP方式避免CORS問題
+            const result = await this.makeJSONPRequest(data);
             console.log('📨 [LOG] GAS回應:', result);
             
             if (result.success) {
@@ -296,6 +285,61 @@ class SurveyApp {
             console.error('❌ [ERROR] 提交到GAS失敗:', error);
             throw error;
         }
+    }
+
+    // 使用JSONP方式發送請求
+    makeJSONPRequest(data) {
+        return new Promise((resolve, reject) => {
+            // 生成唯一的callback函數名
+            const callbackName = 'jsonpCallback' + Date.now() + Math.random().toString(36).substr(2, 9);
+            
+            // 建立全域callback函數
+            window[callbackName] = (result) => {
+                // 清理
+                document.head.removeChild(script);
+                delete window[callbackName];
+                
+                resolve(result);
+            };
+            
+            // 建立參數
+            const params = new URLSearchParams();
+            params.append('action', 'submit');
+            params.append('callback', callbackName);
+            
+            // 添加所有資料作為URL參數
+            Object.keys(data).forEach(key => {
+                params.append(key, data[key]);
+            });
+            
+            const url = `${this.gasUrl}?${params.toString()}`;
+            console.log('🔗 [LOG] JSONP請求URL:', url);
+            
+            // 建立script標籤
+            const script = document.createElement('script');
+            script.src = url;
+            
+            // 處理錯誤
+            script.onerror = () => {
+                // 清理
+                document.head.removeChild(script);
+                delete window[callbackName];
+                
+                reject(new Error('JSONP請求失敗'));
+            };
+            
+            // 設定超時
+            setTimeout(() => {
+                if (window[callbackName]) {
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    reject(new Error('請求超時'));
+                }
+            }, 30000); // 30秒超時
+            
+            // 執行請求
+            document.head.appendChild(script);
+        });
     }
 
     // 設定提交按鈕狀態
