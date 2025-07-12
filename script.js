@@ -14,6 +14,9 @@ class SurveyApp {
         console.log('📋 [LOG] 開始初始化問卷表應用程式');
         
         try {
+            // 確保 DOM 已完全載入
+            await this.waitForDOM();
+            
             // 檢查是否在LINE環境中
             if (typeof liff !== 'undefined') {
                 await this.initializeLiff();
@@ -31,6 +34,17 @@ class SurveyApp {
             console.error('❌ [ERROR] 初始化失敗:', error);
             this.showError('初始化失敗，請重新整理頁面');
         }
+    }
+
+    // 等待 DOM 完全載入
+    waitForDOM() {
+        return new Promise((resolve) => {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', resolve);
+            } else {
+                resolve();
+            }
+        });
     }
 
     // 初始化LIFF
@@ -74,15 +88,14 @@ class SurveyApp {
     // 更新用戶資訊顯示
     updateUserInfo() {
         const userInfoElement = document.getElementById('userInfo');
+        if (!userInfoElement) {
+            console.error('❌ [ERROR] 找不到用戶資訊元素 #userInfo');
+            return;
+        }
+        
         if (this.userProfile) {
             userInfoElement.textContent = `歡迎您，${this.userProfile.displayName}！`;
             userInfoElement.style.opacity = '1';
-            
-            // 預填姓名欄位
-            const nameInput = document.getElementById('name');
-            if (nameInput && !nameInput.value) {
-                nameInput.value = this.userProfile.displayName;
-            }
         } else {
             userInfoElement.textContent = '歡迎填寫問卷！';
         }
@@ -94,11 +107,12 @@ class SurveyApp {
         
         // 表單提交事件
         const form = document.getElementById('surveyForm');
+        if (!form) {
+            console.error('❌ [ERROR] 找不到表單元素 #surveyForm');
+            return;
+        }
+        
         form.addEventListener('submit', this.handleSubmit.bind(this));
-
-        // 推薦度滑桿事件
-        const recommendationSlider = document.getElementById('recommendation');
-        recommendationSlider.addEventListener('input', this.updateRecommendationValue.bind(this));
 
         // 表單驗證事件
         const requiredFields = form.querySelectorAll('[required]');
@@ -106,6 +120,8 @@ class SurveyApp {
             field.addEventListener('blur', this.validateField.bind(this));
             field.addEventListener('input', this.clearFieldError.bind(this));
         });
+        
+        console.log('✅ [LOG] 事件監聽器設定完成');
     }
 
     // 設定表單互動效果
@@ -114,6 +130,11 @@ class SurveyApp {
         
         // 添加聚焦效果
         const inputs = document.querySelectorAll('input, select, textarea');
+        if (inputs.length === 0) {
+            console.warn('⚠️ [WARNING] 找不到任何輸入元素');
+            return;
+        }
+        
         inputs.forEach(input => {
             input.addEventListener('focus', () => {
                 input.parentElement.classList.add('focused');
@@ -123,16 +144,8 @@ class SurveyApp {
                 input.parentElement.classList.remove('focused');
             });
         });
-
-        // 初始化推薦度值顯示
-        this.updateRecommendationValue();
-    }
-
-    // 更新推薦度值顯示
-    updateRecommendationValue() {
-        const slider = document.getElementById('recommendation');
-        const valueDisplay = document.getElementById('recommendationValue');
-        valueDisplay.textContent = slider.value;
+        
+        console.log('✅ [LOG] 表單互動效果設定完成');
     }
 
     // 驗證單個欄位
@@ -161,28 +174,40 @@ class SurveyApp {
         console.log('🔍 [LOG] 開始驗證表單');
         
         let isValid = true;
-        const requiredFields = form.querySelectorAll('[required]');
         
-        requiredFields.forEach(field => {
-            const formGroup = field.closest('.form-group');
+        // 驗證必填的單選按鈕群組
+        const requiredRadioGroups = ['age', 'gender', 'location', 'frequency', 'purchase_time', 'meal_type', 'price_premium', 'ingredient_concern'];
+        
+        requiredRadioGroups.forEach(groupName => {
+            const radios = form.querySelectorAll(`input[name="${groupName}"]`);
+            const checked = Array.from(radios).some(radio => radio.checked);
             
-            if (!field.value.trim()) {
+            if (!checked) {
+                const formGroup = radios[0].closest('.form-group');
                 formGroup.classList.add('error');
                 isValid = false;
             } else {
+                const formGroup = radios[0].closest('.form-group');
                 formGroup.classList.remove('error');
             }
         });
         
-        // 驗證滿意度單選按鈕
-        const satisfactionRadios = form.querySelectorAll('input[name="satisfaction"]');
-        const satisfactionChecked = Array.from(satisfactionRadios).some(radio => radio.checked);
+        // 驗證必填的複選框群組
+        const requiredCheckboxGroups = ['purchase_location', 'priority', 'bakery_items', 'flavor_preference'];
         
-        if (!satisfactionChecked) {
-            const satisfactionGroup = satisfactionRadios[0].closest('.form-group');
-            satisfactionGroup.classList.add('error');
-            isValid = false;
-        }
+        requiredCheckboxGroups.forEach(groupName => {
+            const checkboxes = form.querySelectorAll(`input[name="${groupName}"]`);
+            const checked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+            
+            if (!checked) {
+                const formGroup = checkboxes[0].closest('.form-group');
+                formGroup.classList.add('error');
+                isValid = false;
+            } else {
+                const formGroup = checkboxes[0].closest('.form-group');
+                formGroup.classList.remove('error');
+            }
+        });
         
         console.log(isValid ? '✅ [LOG] 表單驗證通過' : '❌ [LOG] 表單驗證失敗');
         return isValid;
@@ -200,18 +225,41 @@ class SurveyApp {
         data.userId = this.userProfile ? this.userProfile.userId : 'anonymous';
         data.displayName = this.userProfile ? this.userProfile.displayName : '匿名用戶';
         
-        // 表單資料
-        data.name = formData.get('name');
-        data.email = formData.get('email');
+        // Part 1: 基本背景
         data.age = formData.get('age');
-        data.occupation = formData.get('occupation');
-        data.satisfaction = formData.get('satisfaction');
-        data.recommendation = formData.get('recommendation');
-        data.feedback = formData.get('feedback') || '';
+        data.gender = formData.get('gender');
+        data.location = formData.get('location');
+        
+        // Part 2: 購買習慣調查
+        data.frequency = formData.get('frequency');
+        data.purchase_time = formData.get('purchase_time');
+        data.meal_type = formData.get('meal_type');
         
         // 收集複選框資料
-        const interests = formData.getAll('interests');
-        data.interests = interests.join(', ');
+        const purchaseLocations = formData.getAll('purchase_location');
+        data.purchase_location = purchaseLocations.join(', ');
+        
+        // Part 3: 選擇考量
+        data.price_premium = formData.get('price_premium');
+        data.ingredient_concern = formData.get('ingredient_concern');
+        
+        const priorities = formData.getAll('priority');
+        data.priority = priorities.join(', ');
+        
+        const bakeryItems = formData.getAll('bakery_items');
+        data.bakery_items = bakeryItems.join(', ');
+        
+        const bakeryItemsOther = formData.get('bakery_items_other');
+        if (bakeryItemsOther) {
+            data.bakery_items += (data.bakery_items ? ', ' : '') + bakeryItemsOther;
+        }
+        
+        const flavorPreferences = formData.getAll('flavor_preference');
+        data.flavor_preference = flavorPreferences.join(', ');
+        
+        // Part 4: 意見與建議
+        data.favorite_bread = formData.get('favorite_bread') || '';
+        data.rare_items = formData.get('rare_items') || '';
         
         console.log('📊 [LOG] 收集到的資料:', data);
         return data;
@@ -345,6 +393,11 @@ class SurveyApp {
     // 設定提交按鈕狀態
     setSubmitButtonState(isLoading) {
         const button = document.getElementById('submitBtn');
+        if (!button) {
+            console.error('❌ [ERROR] 找不到提交按鈕元素 #submitBtn');
+            return;
+        }
+        
         if (isLoading) {
             button.classList.add('loading');
             button.disabled = true;
@@ -360,6 +413,11 @@ class SurveyApp {
         
         const form = document.getElementById('surveyForm');
         const successMessage = document.getElementById('successMessage');
+        
+        if (!form || !successMessage) {
+            console.error('❌ [ERROR] 找不到必要的DOM元素');
+            return;
+        }
         
         form.style.display = 'none';
         successMessage.style.display = 'block';
@@ -380,6 +438,12 @@ class SurveyApp {
         const form = document.getElementById('surveyForm');
         const errorMessage = document.getElementById('errorMessage');
         const errorText = document.getElementById('errorText');
+        
+        if (!form || !errorMessage || !errorText) {
+            console.error('❌ [ERROR] 找不到必要的DOM元素，直接alert錯誤訊息');
+            alert('錯誤：' + message);
+            return;
+        }
         
         errorText.textContent = message;
         form.style.display = 'none';
